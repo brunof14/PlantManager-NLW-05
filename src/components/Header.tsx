@@ -1,19 +1,28 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import { View, Text, Image, StyleSheet } from "react-native";
 import colors from "../styles/colors";
 import fonts from "../styles/fonts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface HeaderProps {
-  name: string;
-}
+export const Header = memo(function Header() {
+  const [userName, setUserName] = useState<string>();
 
-export const Header = memo(function Header({ name }: HeaderProps) {
+  useEffect(() => {
+    async function loadStorageUserName() {
+      const user = await AsyncStorage.getItem("@plantmanager:user");
+
+      setUserName(user || "");
+    }
+
+    loadStorageUserName();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View>
         <Text style={styles.greeting}>Olá,</Text>
-        <Text style={styles.userName}>{name}</Text>
+        <Text style={styles.userName}>{userName}</Text>
       </View>
       <Image
         style={styles.image}
