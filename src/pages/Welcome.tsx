@@ -16,10 +16,10 @@ import { Feather } from "@expo/vector-icons";
 import wateringImg from "../assets/watering.png";
 
 export function Welcome() {
-  const navagation = useNavigation()
+  const navigation = useNavigation()
 
   function handleStart() {
-    navagation.navigate('UserIdentification')
+    navigation.navigate('UserIdentification')
   }
 
   return (
