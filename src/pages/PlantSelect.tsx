@@ -47,22 +47,41 @@ export function PlantSelect() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [maxPagination, setMaxPagination] = useState(0);
 
   async function fetchPlants() {
-    const { data } = await api.get(
-      `plants?_sort=name&_order=asc&_page=${page}&_limit=8`
+    const limit = 8;
+    const arrivedAtMaximumPagination = page > maxPagination;
+
+    if (arrivedAtMaximumPagination && maxPagination) {
+      setLoadingMore(false);
+      return;
+    }
+
+    const { data, headers } = await api.get(
+      `plants?_sort=name&_order=asc&_page=${page}&_limit=${limit}`
     );
 
-    if (!data) return setLoading(true);
+    const maximumPaginate = Math.ceil(Number(headers["x-total-count"]) / limit);
+    const notLoadMaxPaginateFromApi = maxPagination !== maximumPaginate;
 
-    if (page > 1) {
-      setPlants((oldValue) => [...oldValue, ...data]);
-    } else {
-      setPlants(data);
+    if (notLoadMaxPaginateFromApi) {
+      setMaxPagination(maximumPaginate);
     }
+
+    setPlants((prevPlants) => [...prevPlants, ...data]);
+    setPage((prevPage) => prevPage + 1);
 
     setLoading(false);
     setLoadingMore(false);
+  }
+
+  async function fetchEnvironments() {
+    const { data } = await api.get(
+      "plants_environments?_sort=title&_order=asc"
+    );
+
+    setEnvironments([DEFAULT_ENVIRONMENT_SELECTED, ...data]);
   }
 
   function handleEnvironmentSelected(environment: string) {
@@ -73,7 +92,6 @@ export function PlantSelect() {
     if (distance < 1) return;
 
     setLoadingMore(true);
-    setPage((oldValue) => oldValue + 1);
     fetchPlants();
   }
 
@@ -84,17 +102,7 @@ export function PlantSelect() {
   }
 
   useEffect(() => {
-    async function fetchEnvironments() {
-      const { data } = await api.get(
-        "plants_environments?_sort=title&_order=asc"
-      );
-
-      setEnvironments([DEFAULT_ENVIRONMENT_SELECTED, ...data]);
-    }
     fetchEnvironments();
-  }, []);
-
-  useEffect(() => {
     fetchPlants();
   }, []);
 
@@ -132,18 +140,18 @@ export function PlantSelect() {
           renderItem={({ item }) => <PlantCardPrimary data={item} />}
           showsVerticalScrollIndicator={false}
           numColumns={2}
-          onEndReachedThreshold={0.15}
+          onEndReachedThreshold={0.1}
           onEndReached={({ distanceFromEnd }) =>
             handleFetchMore(distanceFromEnd)
           }
           ListFooterComponent={
             loadingMore ? (
               <ActivityIndicator
-                style={styles.activyIndicator}
+                style={styles.activityIndicator}
                 color={colors.green}
               />
             ) : (
-              <View style={styles.activyIndicator}></View>
+              <></>
             )
           }
         />
@@ -186,8 +194,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     justifyContent: "center",
   },
-  activyIndicator: {
-    marginVertical: 20,
+  activityIndicator: {
+    marginVertical: 30,
     padding: 20,
   },
 });
