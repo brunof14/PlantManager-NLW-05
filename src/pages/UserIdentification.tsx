@@ -18,17 +18,17 @@ import fonts from "../styles/fonts";
 
 export function UserIdentification() {
   const [isFocused, setIsFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
-  const [name, setName] = useState<string>();
-  const navagation = useNavigation();
+  const [name, setName] = useState<string>("");
+  const isFilled = name !== "";
+
+  const navigation = useNavigation();
 
   const handleSubmit = useCallback(() => {
-    navagation.navigate("Confirmation");
+    navigation.navigate("Confirmation");
   }, []);
 
   function handleInputBlur() {
     setIsFocused(false);
-    setIsFilled(!!name);
   }
 
   function handleInputFocus() {
@@ -36,7 +36,6 @@ export function UserIdentification() {
   }
 
   function handleInputChange(value: string) {
-    setIsFilled(!!value);
     setName(value);
   }
 
