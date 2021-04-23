@@ -102,62 +102,62 @@ export function PlantSelect() {
     fetchPlants();
   }, []);
 
-  if (loading) return <Load />;
-
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Header />
+    <Load isLoading={loading}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Header />
 
-        <Text style={styles.title}>Em qual ambiente</Text>
-        <Text style={styles.subtitle}>você quer colocar sua planta?</Text>
-      </View>
-      <View>
-        <FlatList
-          data={environments}
-          keyExtractor={(item) => String(item.key)}
-          renderItem={({ item }) => (
-            <EnvironmentButton
-              title={item.title}
-              active={item.key === environmentSelected}
-              onPress={() => handleEnvironmentSelected(item.key)}
-            />
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.environmentList}
-        />
-      </View>
-
-      <View style={styles.plants}>
-        <FlatList
-          data={getFilteredPlants(environmentSelected)}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <PlantCardPrimary
-              data={item}
-              onPress={() => handlePlantSelect(item)}
-            />
-          )}
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          onEndReachedThreshold={0.1}
-          onEndReached={({ distanceFromEnd }) =>
-            handleFetchMore(distanceFromEnd)
-          }
-          ListFooterComponent={
-            loadingMore ? (
-              <ActivityIndicator
-                style={styles.activityIndicator}
-                color={colors.green}
+          <Text style={styles.title}>Em qual ambiente</Text>
+          <Text style={styles.subtitle}>você quer colocar sua planta?</Text>
+        </View>
+        <View>
+          <FlatList
+            data={environments}
+            keyExtractor={(item) => String(item.key)}
+            renderItem={({ item }) => (
+              <EnvironmentButton
+                title={item.title}
+                active={item.key === environmentSelected}
+                onPress={() => handleEnvironmentSelected(item.key)}
               />
-            ) : (
-              <></>
-            )
-          }
-        />
+            )}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.environmentList}
+          />
+        </View>
+
+        <View style={styles.plants}>
+          <FlatList
+            data={getFilteredPlants(environmentSelected)}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => (
+              <PlantCardPrimary
+                data={item}
+                onPress={() => handlePlantSelect(item)}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            onEndReachedThreshold={0.1}
+            onEndReached={({ distanceFromEnd }) =>
+              handleFetchMore(distanceFromEnd)
+            }
+            ListFooterComponent={
+              loadingMore ? (
+                <ActivityIndicator
+                  style={styles.activityIndicator}
+                  color={colors.green}
+                />
+              ) : (
+                <></>
+              )
+            }
+          />
+        </View>
       </View>
-    </View>
+    </Load>
   );
 }
 

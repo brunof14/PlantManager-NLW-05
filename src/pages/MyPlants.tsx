@@ -1,62 +1,101 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, FlatList } from "react-native";
+import { StyleSheet, View, Text, Image, FlatList, Alert } from "react-native";
 import { Header } from "../components/Header";
 import colors from "../styles/colors";
 
 import waterDrop from "../assets/waterdrop.png";
-import { loadPlants, LocalPlantsProps } from "../libs/storage";
+import {
+  loadPlants,
+  LocalPlantsProps,
+  PlantProps,
+  KEY_STORAGE_PLANTS,
+  removePlant,
+} from "../libs/storage";
 import { formatDistance } from "date-fns";
 import { pt } from "date-fns/locale";
 import fonts from "../styles/fonts";
 import { PlantCardSecondary } from "../components/PlantCardSecondary";
+import { Load } from "../components/Load";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function MyPlants() {
   const [myPlants, setMyPlants] = useState<LocalPlantsProps[]>([]);
+  const [loading, setLoading] = useState(true);
   const [nextWatered, setNextWatered] = useState<string>();
 
-  useEffect(() => {
-    async function loadStorageData() {
-      const plantsStorage = await loadPlants();
-
-      if (!plantsStorage) return;
-
-      const [firstPlant] = plantsStorage;
-
-      const nextTime = formatDistance(
-        new Date(firstPlant.dateTimeNotification).getTime(),
-        new Date().getTime(),
-        { locale: pt }
-      );
-
-      setNextWatered(
-        `Não esqueça de regar a ${firstPlant.name} à ${nextTime}.`
-      );
-      setMyPlants(plantsStorage);
+  async function loadStorageData() {
+    const plantsStorage = await loadPlants();
+    if (!plantsStorage) {
+      setLoading(false)
+      return
     }
+    
+    const [firstPlant] = plantsStorage;
 
+    const nextTime = formatDistance(
+      new Date(firstPlant.dateTimeNotification).getTime(),
+      new Date().getTime(),
+      { locale: pt }
+    );
+
+    setNextWatered(`Não esqueça de regar a ${firstPlant.name} à ${nextTime}.`);
+    setMyPlants(plantsStorage);
+    setLoading(false);
+  }
+
+  useEffect(() => {
     loadStorageData();
   }, []);
 
+  function handleRemove(plant: PlantProps) {
+    Alert.alert("Remover", `Deseja remover a ${plant.name}`, [
+      {
+        text: "Não 🙏",
+        style: "cancel",
+      },
+      {
+        text: "Sim 😥",
+        onPress: async () => {
+          try {
+            await removePlant(String(plant.id));
+            setMyPlants((prevPlants) =>
+              prevPlants.filter(({ id }) => id !== plant.id)
+            );
+          } catch (error) {
+            Alert.alert("Não foi possível remover! 😥");
+          }
+        },
+      },
+    ]);
+  }
+
   return (
-    <View style={styles.container}>
-      <Header />
+    <Load isLoading={loading}>
+      <View style={styles.container}>
+        <Header />
 
-      <View style={styles.spotlight}>
-        <Image source={waterDrop} style={styles.spotlightImage} />
-        <Text style={styles.spotlightText}>{nextWatered}</Text>
+        <View style={styles.spotlight}>
+          <Image source={waterDrop} style={styles.spotlightImage} />
+          <Text style={styles.spotlightText}>{nextWatered}</Text>
+        </View>
+
+        <View style={styles.plants}>
+          <Text style={styles.plantsTitle}>Próximas regadas</Text>
+
+          <FlatList
+            keyExtractor={(item) => String(item.id)}
+            data={myPlants}
+            renderItem={({ item }) => (
+              <PlantCardSecondary
+                data={item}
+                handleRemove={() => handleRemove(item)}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
       </View>
-
-      <View style={styles.plants}>
-        <Text style={styles.plantsTitle}>Próximas regadas</Text>
-
-        <FlatList
-          keyExtractor={(item) => String(item.id)}
-          data={myPlants}
-          renderItem={({ item }) => <PlantCardSecondary data={item} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    </View>
+    </Load>
   );
 }
 

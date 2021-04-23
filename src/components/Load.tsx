@@ -1,11 +1,17 @@
-import React, { memo } from "react";
+import React from "react";
 
 import { StyleSheet, View } from "react-native";
 
 import LottieView from "lottie-react-native";
 import loadAnimation from "../assets/load.json";
 
-export const Load = memo(function Load() {
+interface LoadProps {
+  isLoading: boolean;
+}
+
+export const Load: React.FC<LoadProps> = ({ isLoading = false, children }) => {
+  if (!isLoading) return <>{children}</>;
+
   return (
     <View style={styles.container}>
       <LottieView
@@ -16,7 +22,7 @@ export const Load = memo(function Load() {
       />
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({
   container: {
