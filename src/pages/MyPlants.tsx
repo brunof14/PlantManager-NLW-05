@@ -8,7 +8,6 @@ import {
   loadPlants,
   LocalPlantsProps,
   PlantProps,
-  KEY_STORAGE_PLANTS,
   removePlant,
 } from "../libs/storage";
 import { formatDistance } from "date-fns";
@@ -16,7 +15,6 @@ import { pt } from "date-fns/locale";
 import fonts from "../styles/fonts";
 import { PlantCardSecondary } from "../components/PlantCardSecondary";
 import { Load } from "../components/Load";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function MyPlants() {
   const [myPlants, setMyPlants] = useState<LocalPlantsProps[]>([]);
@@ -38,7 +36,7 @@ export function MyPlants() {
       { locale: pt }
     );
 
-    setNextWatered(`Não esqueça de regar a ${firstPlant.name} à ${nextTime}.`);
+    setNextWatered(`Regue sua ${firstPlant.name} daqui a ${nextTime}.`);
     setMyPlants(plantsStorage);
     setLoading(false);
   }
@@ -72,7 +70,7 @@ export function MyPlants() {
   return (
     <Load isLoading={loading}>
       <View style={styles.container}>
-        <Header />
+        <Header title="Minhas" subtitle="Plantinhas"/>
 
         <View style={styles.spotlight}>
           <Image source={waterDrop} style={styles.spotlightImage} />
@@ -105,7 +103,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 30,
-    paddingTop: 50,
     backgroundColor: colors.background,
   },
   spotlight: {

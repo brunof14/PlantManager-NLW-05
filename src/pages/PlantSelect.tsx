@@ -19,7 +19,7 @@ import { Load } from "../components/Load";
 
 import fonts from "../styles/fonts";
 import { useNavigation } from "@react-navigation/native";
-import { PlantProps } from "../libs/storage";
+import { loadUserName, PlantProps } from "../libs/storage";
 
 interface EnvironmentProps {
   key: string;
@@ -29,6 +29,7 @@ interface EnvironmentProps {
 const DEFAULT_ENVIRONMENT_SELECTED = { key: "all", title: "Todos" };
 
 export function PlantSelect() {
+  const [userName, setUserName] = useState("")
   const [environments, setEnvironments] = useState<EnvironmentProps[]>([]);
   const [plants, setPlants] = useState<PlantProps[]>([]);
   const [environmentSelected, setEnvironmentSelected] = useState(
@@ -76,6 +77,11 @@ export function PlantSelect() {
     setEnvironments([DEFAULT_ENVIRONMENT_SELECTED, ...data]);
   }
 
+  async function loadAndSetUserName() {
+    const name = await loadUserName()
+    setUserName(name)
+  }
+
   function handleEnvironmentSelected(environment: string) {
     setEnvironmentSelected(environment);
   }
@@ -98,6 +104,7 @@ export function PlantSelect() {
   }
 
   useEffect(() => {
+    loadAndSetUserName()
     fetchEnvironments();
     fetchPlants();
   }, []);
@@ -106,7 +113,7 @@ export function PlantSelect() {
     <Load isLoading={loading}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Header />
+          <Header title="Olá," subtitle={userName}/>
 
           <Text style={styles.title}>Em qual ambiente</Text>
           <Text style={styles.subtitle}>você quer colocar sua planta?</Text>

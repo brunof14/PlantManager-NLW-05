@@ -11,7 +11,7 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { saveUserName } from "../libs/storage";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../components/Button";
@@ -30,7 +30,7 @@ export function UserIdentification() {
       return Alert.alert("Me diz como chamar você 😢");
     }
     try {
-      await AsyncStorage.setItem("@plantmanager:user", name);
+      await saveUserName(name)
       navigation.navigate("Confirmation", {
         title: 'Prontinho',
         subtitle: 'Agora vamos começar a cuidar das suas plantinhas com muito cuidado.',

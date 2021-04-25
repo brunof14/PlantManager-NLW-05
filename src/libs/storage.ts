@@ -27,7 +27,7 @@ export interface StoragePlantProps {
   };
 }
 
-export const KEY_STORAGE_PLANTS = "@plantmanager:plants";
+const KEY_STORAGE_PLANTS = "@plantmanager:plants";
 
 export async function savePlant(plant: PlantProps): Promise<void> {
   try {
@@ -136,4 +136,14 @@ export async function removePlant(id: string): Promise<void> {
   } catch (error) {
     throw new Error(error);
   }
+}
+
+const KEY_STORAGE_USERNAME = "@plantmanager:username";
+
+export async function loadUserName(): Promise<string> {
+  return await AsyncStorage.getItem(KEY_STORAGE_USERNAME) || ""
+}
+
+export async function saveUserName(name: string): Promise<void> {
+  await AsyncStorage.setItem(KEY_STORAGE_USERNAME, name)
 }
