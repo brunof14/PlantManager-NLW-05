@@ -24,10 +24,10 @@ export function MyPlants() {
   async function loadStorageData() {
     const plantsStorage = await loadPlants();
     if (!plantsStorage) {
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
-    
+
     const [firstPlant] = plantsStorage;
 
     const nextTime = formatDistance(
@@ -70,27 +70,39 @@ export function MyPlants() {
   return (
     <Load isLoading={loading}>
       <View style={styles.container}>
-        <Header title="Minhas" subtitle="Plantinhas"/>
+        <View style={styles.wrapperPadding}>
+          <Header title="Minhas" subtitle="Plantinhas" />
+        </View>
 
-        <View style={styles.spotlight}>
-          <Image source={waterDrop} style={styles.spotlightImage} />
-          <Text style={styles.spotlightText}>{nextWatered}</Text>
+        <View style={styles.wrapperPadding}>
+          <View style={styles.spotlight}>
+            <Image source={waterDrop} style={styles.spotlightImage} />
+            <Text style={styles.spotlightText}>{nextWatered}</Text>
+          </View>
         </View>
 
         <View style={styles.plants}>
-          <Text style={styles.plantsTitle}>Próximas regadas</Text>
+          <View style={styles.wrapperPadding}>
+            <Text style={styles.plantsTitle}>Próximas regadas</Text>
+          </View>
 
+        
           <FlatList
             keyExtractor={(item) => String(item.id)}
             data={myPlants}
+            contentContainerStyle={{
+              paddingHorizontal: 30
+            }}
             renderItem={({ item }) => (
               <PlantCardSecondary
                 data={item}
                 handleRemove={() => handleRemove(item)}
               />
             )}
+            ItemSeparatorComponent={() => <View style={{ margin: 6 }}></View>}
             showsVerticalScrollIndicator={false}
           />
+        
         </View>
       </View>
     </Load>
@@ -102,8 +114,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 30,
     backgroundColor: colors.background,
+  },
+  wrapperPadding: {
+    paddingHorizontal: 30,
+    width: "100%",
   },
   spotlight: {
     backgroundColor: colors.blue_light,

@@ -28,8 +28,11 @@ export function PlantCardSecondary({
   return (
     <Swipeable
       overshootRight={false}
+      containerStyle={{
+        overflow: 'visible'
+      }}
       renderRightActions={() => (
-        <Animated.View>
+        <Animated.View style={styles.containerAnimated}>
           <RectButton style={styles.buttonRemove} onPress={handleRemove}>
             <Feather name="trash" size={32} color={colors.white} />
           </RectButton>
@@ -57,7 +60,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.shape,
-    marginVertical: 5,
   },
   title: {
     flex: 1,
@@ -82,13 +84,17 @@ const styles = StyleSheet.create({
   },
   buttonRemove: {
     width: 100,
-    height: 85,
+    height: '100%',
     backgroundColor: colors.red,
-    marginTop: 15,
+    
     borderRadius: 20,
     justifyContent: "center",
+    alignItems: "flex-end",
+    paddingRight: 24,
+  },
+  containerAnimated: {
+    justifyContent: "center",
     alignItems: "center",
-    paddingLeft: 10,
-    marginLeft: -20,
+    marginLeft: -30
   },
 });
