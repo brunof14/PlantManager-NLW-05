@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   plants: {
     flex: 1,
-    paddingHorizontal: 32,
+    paddingHorizontal: 20,
     justifyContent: "center",
   },
   activityIndicator: {

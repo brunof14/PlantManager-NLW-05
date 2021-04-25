@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 10,
     alignItems: "center",
-    margin: 10,
+    margin: 10
   },
   text: {
     color: colors.green_dark,
